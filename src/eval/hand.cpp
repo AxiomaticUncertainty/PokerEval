@@ -3,10 +3,11 @@
 
 #include <optional>
 #include <sstream>
+#include <utility>
 
 namespace eval {
 
-Evaluation::Evaluation(HandType type, std::array<std::size_t, 5>&& context) : type(type), context(context) {}
+Evaluation::Evaluation(HandType type, std::array<std::size_t, 5>&& context) : type(type), context(std::move(context)) {}
 
 bool Evaluation::operator<(const Evaluation& other) const {
     if (this->type != other.type)

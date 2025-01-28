@@ -12,8 +12,8 @@ void h2h() {
     eval::Simulator simulate;
     auto result = simulate(
         {game::Card(game::Suit::CLUBS, 14), game::Card(game::Suit::SPADES, 14)},
-        2,
-        1000000
+        5,
+        100'000'000
     );
 
     prettyResults(result);
