@@ -28,15 +28,15 @@ Simulator::Results Simulator::operator()(const std::pair<game::Card, game::Card>
     game::Deck deck(omittedCards);
 
     Results aggregateResults;
+    std::vector<eval::Hand> hands(tableSize);
     for (auto _ : std::views::iota(0ul, runs)) {
         deck.shuffle();
 
         std::size_t drawSize = 2 * (tableSize - 1) + 5;
         auto cards = deck.viewTop(drawSize);
-
-        std::vector<eval::Hand> hands(tableSize);
         
         for (std::size_t h = 0; h < tableSize; ++h) {
+            hands[h].reset();
             if (h == 0) {
                 hands[h].addCard(hand.first);
                 hands[h].addCard(hand.second);

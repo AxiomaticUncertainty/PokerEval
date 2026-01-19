@@ -13,8 +13,7 @@ Deck::Deck() : m_cards() {
 }
 
 void Deck::shuffle() {
-    auto rd = std::random_device{};
-    auto rng = std::default_random_engine{ rd() };
+    static thread_local std::mt19937 rng{std::random_device{}()};
     std::ranges::shuffle(m_cards, rng);
 }
 

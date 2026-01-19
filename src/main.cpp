@@ -2,6 +2,9 @@
 #include "eval/monte.h"
 
 #include <iostream>
+#include <thread>
+#include <mutex>
+#include <vector>
 
 void prettyResults(const auto& result) {
     std::cout << "Won " << result.first << " of " << result.second << " total hands\n";
@@ -12,11 +15,37 @@ void h2h() {
     eval::Simulator simulate;
     auto result = simulate(
         {game::Card(game::Suit::CLUBS, 14), game::Card(game::Suit::SPADES, 14)},
-        5,
-        100'000'000
+        2,
+        10'000'000
     );
 
     prettyResults(result);
+}
+
+std::mutex mutex;
+
+void h2ht() {
+    std::vector<std::thread> threads;
+    eval::Simulator::Results shared_results;
+    for (std::size_t t = 0; t < 1; ++t) {
+        threads.emplace_back([&shared_results] {
+            eval::Simulator simulate;
+            auto result = simulate(
+                {game::Card(game::Suit::CLUBS, 14), game::Card(game::Suit::SPADES, 14)},
+                2,
+                1'000'000
+            );
+
+            std::lock_guard lock(mutex);
+            shared_results.first += result.first;
+            shared_results.second += result.second;
+        });
+    }
+
+    for (auto& thread : threads)
+        thread.join();
+
+    prettyResults(shared_results);
 }
 
 void allCombinations() {
@@ -48,7 +77,7 @@ void allCombinations() {
 }
 
 int main() {
-    h2h();
+    h2ht();
     // allCombinations();
 
     return 0;

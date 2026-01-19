@@ -108,6 +108,15 @@ std::string handToString(const Evaluation& evaluation) {
 
 Hand::Hand() : m_cards(), m_valueSets(), m_flushSets(), m_numCards(0) {}
 
+void Hand::reset() {
+    for (auto& suit : m_cards)
+        suit.fill(false);
+    
+    m_valueSets.fill(0);
+    m_flushSets.fill(0);
+    m_numCards = 0;
+}
+
 void Hand::addCard(const game::Card& card) {
     auto suitIndex = static_cast<std::size_t>(card.suit());
     auto valueIndex = card.number() - 2;
@@ -251,8 +260,8 @@ std::optional<std::size_t> Hand::straightFlush(game::Suit suit) const {
     return high;
 }
 
-std::array<std::vector<std::size_t>, 4> Hand::sets() const {
-    std::array<std::vector<std::size_t>, 4> setsInHand;
+std::array<Hand::CardSet, 4> Hand::sets() const {
+    std::array<Hand::CardSet, 4> setsInHand;
     for (int i = 12; i >= 0; --i) {
         for (std::size_t set = 0; set < m_valueSets[static_cast<std::size_t>(i)]; ++set) {
             setsInHand[set].push_back(i + 2);

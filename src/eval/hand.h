@@ -40,13 +40,25 @@ public:
     Hand();
 
     void addCard(const game::Card& card);
+    void reset();
     Evaluation evaluate() const;
 
     // public for testing
     std::optional<game::Suit> flush() const;
     std::optional<std::size_t> straight() const;
     std::optional<std::size_t> straightFlush(game::Suit suit) const;
-    std::array<std::vector<std::size_t>, 4> sets() const;
+    struct CardSet {
+        std::array<std::size_t, 7> values;
+        std::size_t count = 0;
+
+        void push_back(std::size_t v) { values[count++] = v; }
+        std::size_t operator[](std::size_t i) const { return values[i]; }
+        bool empty() const { return count == 0; }
+        std::size_t size() const { return count; }
+        auto begin() const { return values.begin(); }
+        auto end() const { return values.begin() + count; }
+    };
+    std::array<CardSet, 4> sets() const;
 
 private:
     /*
